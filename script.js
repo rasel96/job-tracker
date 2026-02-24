@@ -1,6 +1,6 @@
 let interviewList = [];
 let rejectedList = [];
-let currentStatus = 'all';
+let currentStatus = 'all-filter-btn';
 
 let total = document.getElementById('total');
 let interviewCount = document.getElementById('interviewCount');
@@ -16,10 +16,21 @@ const filterSection = document.getElementById('filter-section');
 
 const emptyState = document.getElementById('emptyState');
 const tabCount = document.getElementById('tab-count');
+
 function calculateCount() {
-  total.innerText = allCardSection.children.length;
+  const totalJobsCount = allCardSection.children.length;
+
+  total.innerText = totalJobsCount;
   interviewCount.innerText = interviewList.length;
   rejectedCount.innerText = rejectedList.length;
+
+  let currentShowing = totalJobsCount;
+  if (currentStatus === 'interview-filter-btn') {
+    currentShowing = interviewList.length;
+  } else if (currentStatus === 'rejected-filter-btn') {
+    currentShowing = rejectedList.length;
+  }
+  tabCount.innerText = `${currentShowing} of ${totalJobsCount}`;
 }
 calculateCount();
 
@@ -35,10 +46,10 @@ function toggleStyle(id) {
   const selected = document.getElementById(id);
 
   currentStatus = id;
-  console.log(currentStatus);
 
   selected.classList.remove('bg-gray-200', 'text-black', 'border');
   selected.classList.add('bg-blue-500', 'text-white');
+
   if (id == 'interview-filter-btn') {
     allCardSection.classList.add('hidden');
     if (interviewList.length === 0) {
@@ -75,7 +86,9 @@ function toggleStyle(id) {
       renderRejected();
     }
   }
+  calculateCount();
 }
+
 mainContainer.addEventListener('click', function (event) {
   if (event.target.classList.contains('interview-btn')) {
     const parenNode = event.target.parentNode.parentNode.parentNode;
@@ -171,13 +184,23 @@ mainContainer.addEventListener('click', function (event) {
     rejectedList = rejectedList.filter(item => item.company != company);
 
     parenNode.remove();
-    if (currentStatus !== 'all') {
+
+    const allOriginalCards = allCardSection.querySelectorAll('.card');
+    allOriginalCards.forEach(card => {
+      if (card.querySelector('.company').innerText === company) {
+        card.remove();
+      }
+    });
+
+    if (currentStatus !== 'all-filter-btn') {
       toggleStyle(currentStatus);
     } else {
       toggleStyle('all-filter-btn');
     }
+    calculateCount();
   }
 });
+
 function renderInterview() {
   filterSection.innerHTML = '';
 
