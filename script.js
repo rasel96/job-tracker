@@ -16,12 +16,12 @@ const filterSection = document.getElementById('filter-section');
 
 const emptyState = document.getElementById('emptyState');
 const tabCount = document.getElementById('tab-count');
-function calCulateCount() {
+function calculateCount() {
   total.innerText = allCardSection.children.length;
   interviewCount.innerText = interviewList.length;
   rejectedCount.innerText = rejectedList.length;
 }
-calCulateCount();
+calculateCount();
 
 function toggleStyle(id) {
   allFilterBtn.classList.add('bg-gray-200', 'text-black', 'border');
@@ -178,3 +178,84 @@ mainContainer.addEventListener('click', function (event) {
     }
   }
 });
+function renderInterview() {
+  filterSection.innerHTML = '';
+
+  for (let job of interviewList) {
+    let div = document.createElement('div');
+    div.className =
+      'card flex justify-between border border-gray-200 p-8 rounded-xl mt-4 shadow-sm relative bg-white';
+    div.innerHTML = `
+         <div class="flex flex-col gap-3">
+            <div>
+              <p class="company text-xl font-bold text-gray-800">${job.company}</p>
+              <p class="position text-gray-500 text-sm">${job.position}</p>
+            </div>
+
+            <div class="flex gap-2 text-xs text-gray-500 my-1">
+              <p class="location">${job.location}</p> • 
+              <p class="type">${job.type}</p> • 
+              <p class="salary">${job.salary}</p>
+            </div>
+            
+            <div>
+              <p class="status inline-block bg-teal-50 border border-teal-200 text-teal-600 px-3 py-1 rounded text-xs font-bold">${job.status}</p>
+            </div>
+            <p class="notes text-sm text-gray-600 mt-2">${job.notes}</p>
+
+            <div class="flex gap-2 mt-2">
+              <button class="interview-btn border border-teal-200 text-teal-600 px-4 py-2 rounded font-medium hover:bg-teal-50">INTERVIEW</button>
+              <button class="rejected-btn border border-red-200 text-red-600 px-4 py-2 rounded font-medium hover:bg-red-50">REJECTED</button>
+            </div>
+          </div>
+
+          <div>
+            <button class="btn-delete absolute top-8 right-8 hover:opacity-75 transition-opacity">
+              <img src="delete.png" alt="Delete" class="w-6 h-6 opacity-60 hover:opacity-100">
+            </button>
+          </div>
+        `;
+    filterSection.appendChild(div);
+  }
+}
+
+function renderRejected() {
+  filterSection.innerHTML = '';
+
+  for (let job of rejectedList) {
+    let div = document.createElement('div');
+    div.className =
+      'card flex justify-between border border-gray-200 p-8 rounded-xl mt-4 shadow-sm relative bg-white';
+    div.innerHTML = `
+         <div class="flex flex-col gap-3">
+            <div>
+              <p class="company text-xl font-bold text-gray-800">${job.company}</p>
+              <p class="position text-gray-500 text-sm">${job.position}</p>
+            </div>
+
+            <div class="flex gap-2 text-xs text-gray-500 my-1">
+              <p class="location">${job.location}</p> • 
+              <p class="type">${job.type}</p> • 
+              <p class="salary">${job.salary}</p>
+            </div>
+            
+            <div>
+              <p class="status inline-block bg-red-50 border border-red-200 text-red-600 px-3 py-1 rounded text-xs font-bold">${job.status}</p>
+            </div>
+            <p class="notes text-sm text-gray-600 mt-2">${job.notes}</p>
+
+            <div class="flex gap-2 mt-2">
+              <button class="interview-btn border border-teal-200 text-teal-600 px-4 py-2 rounded font-medium hover:bg-teal-50">INTERVIEW</button>
+              <button class="rejected-btn border border-red-200 text-red-600 px-4 py-2 rounded font-medium hover:bg-red-50">REJECTED</button>
+            </div>
+          </div>
+
+          <div>
+            <button class="btn-delete absolute top-8 right-8 hover:opacity-75 transition-opacity">
+              <img src="delete.png" alt="Delete" class="w-6 h-6 opacity-60 hover:opacity-100">
+            </button>
+          </div>
+        `;
+    filterSection.appendChild(div);
+  }
+}
