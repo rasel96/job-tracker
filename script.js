@@ -16,3 +16,165 @@ const filterSection = document.getElementById('filter-section');
 
 const emptyState = document.getElementById('emptyState');
 const tabCount = document.getElementById('tab-count');
+function calCulateCount() {
+  total.innerText = allCardSection.children.length;
+  interviewCount.innerText = interviewList.length;
+  rejectedCount.innerText = rejectedList.length;
+}
+calCulateCount();
+
+function toggleStyle(id) {
+  allFilterBtn.classList.add('bg-gray-200', 'text-black', 'border');
+  interviewFilterBtn.classList.add('bg-gray-200', 'text-black', 'border');
+  rejectedFilterBtn.classList.add('bg-gray-200', 'text-black', 'border');
+
+  allFilterBtn.classList.remove('bg-blue-500', 'text-white');
+  interviewFilterBtn.classList.remove('bg-blue-500', 'text-white');
+  rejectedFilterBtn.classList.remove('bg-blue-500', 'text-white');
+
+  const selected = document.getElementById(id);
+
+  currentStatus = id;
+  console.log(currentStatus);
+
+  selected.classList.remove('bg-gray-200', 'text-black', 'border');
+  selected.classList.add('bg-blue-500', 'text-white');
+  if (id == 'interview-filter-btn') {
+    allCardSection.classList.add('hidden');
+    if (interviewList.length === 0) {
+      emptyState.classList.remove('hidden');
+      emptyState.classList.add('flex');
+      filterSection.classList.add('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      filterSection.classList.remove('hidden');
+      renderInterview();
+    }
+  } else if (id == 'all-filter-btn') {
+    filterSection.classList.add('hidden');
+    if (allCardSection.children.length === 0) {
+      emptyState.classList.remove('hidden');
+      emptyState.classList.add('flex');
+      allCardSection.classList.add('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      allCardSection.classList.remove('hidden');
+    }
+  } else if (id == 'rejected-filter-btn') {
+    allCardSection.classList.add('hidden');
+    if (rejectedList.length === 0) {
+      emptyState.classList.remove('hidden');
+      emptyState.classList.add('flex');
+      filterSection.classList.add('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      filterSection.classList.remove('hidden');
+      renderRejected();
+    }
+  }
+}
+mainContainer.addEventListener('click', function (event) {
+  if (event.target.classList.contains('interview-btn')) {
+    const parenNode = event.target.parentNode.parentNode.parentNode;
+
+    const company = parenNode.querySelector('.company').innerText;
+    const position = parenNode.querySelector('.position').innerText;
+    const location = parenNode.querySelector('.location').innerText;
+    const type = parenNode.querySelector('.type').innerText;
+    const salary = parenNode.querySelector('.salary').innerText;
+    const status = parenNode.querySelector('.status').innerText;
+    const notes = parenNode.querySelector('.notes').innerText;
+
+    parenNode.querySelector('.status').innerText = 'INTERVIEW';
+    parenNode.querySelector('.status').className =
+      'status inline-block bg-teal-50 border border-teal-200 text-teal-600 px-3 py-1 rounded text-xs font-bold';
+
+    const cardInfo = {
+      company,
+      position,
+      location,
+      type,
+      salary,
+      status: 'INTERVIEW',
+      notes,
+    };
+
+    const jobExist = interviewList.find(
+      item => item.company == cardInfo.company,
+    );
+
+    if (!jobExist) {
+      interviewList.push(cardInfo);
+    }
+    rejectedList = rejectedList.filter(
+      item => item.company != cardInfo.company,
+    );
+
+    if (currentStatus == 'rejected-filter-btn') {
+      toggleStyle(currentStatus);
+    }
+
+    calculateCount();
+  } else if (event.target.classList.contains('rejected-btn')) {
+    const parenNode = event.target.parentNode.parentNode.parentNode;
+
+    const company = parenNode.querySelector('.company').innerText;
+    const position = parenNode.querySelector('.position').innerText;
+    const location = parenNode.querySelector('.location').innerText;
+    const type = parenNode.querySelector('.type').innerText;
+    const salary = parenNode.querySelector('.salary').innerText;
+    const status = parenNode.querySelector('.status').innerText;
+    const notes = parenNode.querySelector('.notes').innerText;
+
+    parenNode.querySelector('.status').innerText = 'REJECTED';
+    parenNode.querySelector('.status').className =
+      'status inline-block bg-red-50 border border-red-200 text-red-600 px-3 py-1 rounded text-xs font-bold';
+
+    const cardInfo = {
+      company,
+      position,
+      location,
+      type,
+      salary,
+      status: 'REJECTED',
+      notes,
+    };
+
+    const jobExist = rejectedList.find(
+      item => item.company == cardInfo.company,
+    );
+
+    if (!jobExist) {
+      rejectedList.push(cardInfo);
+    }
+
+    interviewList = interviewList.filter(
+      item => item.company != cardInfo.company,
+    );
+    if (currentStatus == 'interview-filter-btn') {
+      toggleStyle(currentStatus);
+    }
+
+    calculateCount();
+  } else if (
+    event.target.classList.contains('btn-delete') ||
+    event.target.closest('.btn-delete')
+  ) {
+    const btnNode = event.target.closest('.btn-delete');
+    const parenNode = btnNode.parentNode.parentNode;
+    const company = parenNode.querySelector('.company').innerText;
+
+    interviewList = interviewList.filter(item => item.company != company);
+    rejectedList = rejectedList.filter(item => item.company != company);
+
+    parenNode.remove();
+    if (currentStatus !== 'all') {
+      toggleStyle(currentStatus);
+    } else {
+      toggleStyle('all-filter-btn');
+    }
+  }
+});
